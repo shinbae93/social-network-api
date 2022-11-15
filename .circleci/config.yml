@@ -9,7 +9,7 @@ orbs:
 jobs:
   lint:
     docker:
-      - image: circleci/node:16.17.1
+      - image: cimg/node:16.17.1
     steps:
       - checkout
       - run: echo "Running tests"
@@ -17,7 +17,7 @@ jobs:
       - run: npm run lint
   test:
     docker:
-      - image: circleci/node:16.17.1
+      - image: cimg/node:16.17.1
     steps:
       - checkout
       - run: echo "Running tests"
@@ -25,7 +25,7 @@ jobs:
       - run: npm test  
   build:
     docker:
-      - image: circleci/node:16.17.1
+      - image: cimg/node:16.17.1
 
     steps:
       - checkout
