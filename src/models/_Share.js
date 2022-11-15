@@ -13,6 +13,8 @@ const shareSchema = new mongoose.Schema({
     required: true,
     ref: 'Post'
   },
+}, {
+  timestamps: true
 });
 //
 const Share = mongoose.model('Share', shareSchema);

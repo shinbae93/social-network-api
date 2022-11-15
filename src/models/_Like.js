@@ -13,6 +13,8 @@ const likeSchema = new mongoose.Schema({
     required: true,
     ref: 'Post'
   },
+}, {
+  timestamps: true
 });
 //
 const Like = mongoose.model('Like', likeSchema);

@@ -9,6 +9,8 @@ const userSchema = new mongoose.Schema({
     required: true,
     trim: true
   }
+}, {
+  timestamps: true
 });
 // # virtual field
 userSchema.virtual('posts', {

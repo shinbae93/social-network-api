@@ -32,6 +32,8 @@ const postSchema = new mongoose.Schema({
     required: true,
     default: 0
   },
+}, {
+  timestamps: true
 });
 // # virtual field
 postSchema.virtual('likes', {
