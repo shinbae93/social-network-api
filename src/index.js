@@ -8,11 +8,8 @@ const postRouter = require('./routers/web-post-manager');
 const app = express();
 
 /** Middle wares */
-// Init sentry
-Sentry.init({ dsn: 'https://3438260379c547c0a958a7a3335bccd5@o4504166714834944.ingest.sentry.io/4504166720536576' });
-// The request handler must be the first middleware on the app
-app.use(Sentry.Handlers.requestHandler());
-// Add other middleware bellow
+Sentry.init({ dsn: 'https://3438260379c547c0a958a7a3335bccd5@o4504166714834944.ingest.sentry.io/4504166720536576' }); // Init sentry
+app.use(Sentry.Handlers.requestHandler()); // The request handler must be the first middleware on the app
 app.use(cors());
 app.use(express.json());
 
@@ -23,8 +20,7 @@ app.get('/debug-sentry', function mainHandler(req, res) {
   throw new Error('My first Sentry error!');
 });
 
-// The sentry error handler must be before any other error middleware and after all controllers
-app.use(Sentry.Handlers.errorHandler());
+app.use(Sentry.Handlers.errorHandler()); // The sentry error handler must be before any other error middleware and after all controllers
 // Add other error middleware bellow
 
 /** Start server */
