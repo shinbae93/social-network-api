@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\"",
-    "server": "node src/index.js",
+    "server": "nodemon src/index.js",
     "lint": "eslint src/*",
     "lint:fix": "eslint --fix src/*"
   },
@@ -30,6 +30,7 @@
     "mongodb": "^4.11.0",
     "mongoose": "^6.7.2",
     "morgan": "^1.10.0",
+    "nodemon": "^2.0.20",
     "validator": "^13.7.0"
   },
   "devDependencies": {
