@@ -31,7 +31,7 @@ jobs:
 # Invoke jobs via workflows
 # See: https://circleci.com/docs/2.0/configuration-reference/#workflows
 workflows:
-  test_build:
+  test_lint:
       jobs:
         - lint
         - test:
