@@ -14,7 +14,7 @@ jobs:
       - checkout
       - setup_remote_docker:
           docker_layer_caching: true
-      - run: echo "Running tests"
+      - run: echo "Running lint"
       - run: npm install
       - run: npm run lint
   test:
