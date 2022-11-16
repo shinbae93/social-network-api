@@ -12,6 +12,8 @@ jobs:
       - image: cimg/node:16.17.1
     steps:
       - checkout
+      - setup_remote_docker:
+          docker_layer_caching: true
       - run: echo "Running tests"
       - run: npm install
       - run: npm run lint
@@ -20,6 +22,8 @@ jobs:
       - image: cimg/node:16.17.1
     steps:
       - checkout
+      - setup_remote_docker:
+          docker_layer_caching: true
       - run: echo "Running tests"
       - run: npm install
       - run: npm run test
