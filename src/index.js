@@ -1,5 +1,6 @@
 const express = require('express');
 const cors = require('cors');
+var morgan = require('morgan');
 const Sentry = require('@sentry/node');
 require('./models/database/mongoose');
 const userRouter = require('./routers/web-user-manager');
@@ -10,6 +11,7 @@ const app = express();
 /** Middle wares */
 Sentry.init({ dsn: 'https://3438260379c547c0a958a7a3335bccd5@o4504166714834944.ingest.sentry.io/4504166720536576' }); // Init sentry
 app.use(Sentry.Handlers.requestHandler()); // The request handler must be the first middleware on the app
+app.use(morgan('tiny'));
 app.use(cors());
 app.use(express.json());
 
