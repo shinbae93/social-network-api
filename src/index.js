@@ -5,6 +5,7 @@ const Sentry = require('@sentry/node');
 require('./models/database/mongoose');
 const userRouter = require('./routers/web-user-manager');
 const postRouter = require('./routers/web-post-manager');
+const commentRouter = require('./routers/web-comment-manager');
 
 const app = express();
 
@@ -18,6 +19,7 @@ app.use(express.json());
 /** Routers */
 app.use(userRouter);
 app.use(postRouter);
+app.use(commentRouter);
 app.get('/debug-sentry', function mainHandler(req, res) {
   throw new Error('My first Sentry error!');
 });
