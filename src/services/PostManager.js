@@ -8,8 +8,18 @@ const jwt = require('jsonwebtoken');
 //
 function PostManager(params) {};
 //
+PostManager.prototype.createPost = async function(postObj, more) {
+  const post = new Post(postObj);
+  const output = {};
+  //
+  await post.save();
+  output.post = post;
+  //
+  return output;
+};
+//
 PostManager.prototype.findPosts = async function(criteria, more) {
-  const posts = await Post.find();
+  const posts = await Post.find().sort([['createdAt', -1]]);
   //
   const output = {
     rows: posts,
