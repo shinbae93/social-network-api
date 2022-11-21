@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\"",
+    "test": "mocha src/tests/UserTest.js",
     "server": "nodemon src/index.js",
     "dev": "node src/index.js",
     "lint": "eslint src/*",
@@ -24,10 +24,14 @@
   "dependencies": {
     "@sentry/node": "^7.19.0",
     "bcryptjs": "^2.4.3",
+    "chai": "^4.3.7",
+    "chai-as-promised": "^7.1.1",
+    "chai-http": "^4.3.0",
     "cors": "^2.8.5",
     "express": "^4.18.2",
     "jsonwebtoken": "^8.5.1",
     "lodash": "^4.17.21",
+    "mocha": "^10.1.0",
     "mongodb": "^4.11.0",
     "mongoose": "^6.7.2",
     "morgan": "^1.10.0",
