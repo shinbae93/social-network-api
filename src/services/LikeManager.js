@@ -2,9 +2,6 @@ const lodash = require('lodash');
 const { User } = require('../models/_User');
 const { Post } = require('../models/_Post');
 const { Like } = require('../models/_Like');
-const { Comment } = require('../models/_Comment');
-const { Share } = require('../models/_Share');
-const jwt = require('jsonwebtoken');
 //
 function LikeManager(params) {};
 //
@@ -32,15 +29,15 @@ LikeManager.prototype.getLikeByPost = async function(postId, more) {
 
 LikeManager.prototype.createLike = async function (likeObj, more) {
   const like = new Like(likeObj);
+  //
   const post = await Post.findById(likeObj.postId);
-  console.log(post);
-  const newpost = await Post.findByIdAndUpdate(
-    likeObj.postId,
-    {
-      totalLikes: post.totalLikes + 1
-    },
-    { new: true }
-  );
+  if (!post) {
+    throw new Error(`Not found post with id [${likeObj.postId}]`);
+  }
+  //
+  await Post.findByIdAndUpdate(likeObj.postId, {
+    totalLikes: post.totalLikes + 1
+  }, { new: true });
   const output = {};
   //
   await like.save();
@@ -50,17 +47,16 @@ LikeManager.prototype.createLike = async function (likeObj, more) {
 };
 
 LikeManager.prototype.deleteLike = async function (likeId, more) {
-  console.log(likeId);
   const like = await Like.findOneAndDelete(likeId);
-  const post = await Post.findById(Like.postId);
-  console.log(post);
-  const newpost = await Post.findByIdAndUpdate(
-    like.postId,
-    {
-      totalLikes: post.totalLikes - 1
-    },
-    { new: true }
-  );
+  //
+  const post = await Post.findById(like.postId);
+  if (!post) {
+    throw new Error(`Not found post with id [${like.postId}]`);
+  }
+  //
+  await Post.findByIdAndUpdate(like.postId, {
+    totalLikes: post.totalLikes - 1
+  }, { new: true });
   const output = {};
   //
   output.like = like;

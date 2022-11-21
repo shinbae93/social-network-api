@@ -1,7 +1,6 @@
 const express = require('express');
 const lodash = require('lodash');
 const router = new express.Router();
-const { Like } = require('../models/_Like');
 const { LikeManager } = require('../services/LikeManager');
 const { auth } = require('../middleware/auth');
 //
@@ -20,7 +19,7 @@ router.get(PATH + '/post/:id/likes', async (req, res) => {
   }
 });
 
-router.post(PATH + '/like', async (req, res) => {
+router.post(PATH + '/likes', auth, async (req, res) => {
   const PICK_FIELDS = ['userId', 'postId'];
   const likeObj = lodash.pick(req.body, PICK_FIELDS);
   //
@@ -33,7 +32,7 @@ router.post(PATH + '/like', async (req, res) => {
   }
 });
 
-router.delete(PATH + '/likes/:id', async (req, res) => {
+router.delete(PATH + '/likes/:id', auth, async (req, res) => {
   //
   try {
     const { like } = await likeManager.deleteLike(req.params.id);

@@ -1,7 +1,6 @@
 const express = require('express');
 const lodash = require('lodash');
 const router = new express.Router();
-const { Share } = require('../models/_Share');
 const { ShareManager } = require('../services/ShareManager');
 const { auth } = require('../middleware/auth');
 //
@@ -9,12 +8,12 @@ const PATH = '/api/v1';
 //
 const shareManager = new ShareManager();
 
-router.post(PATH + '/shares', async (req, res) => {
+router.post(PATH + '/shares', auth, async (req, res) => {
   const PICK_FIELDS = ['userId', 'postId'];
-  const ShareObj = lodash.pick(req.body, PICK_FIELDS);
+  const shareObj = lodash.pick(req.body, PICK_FIELDS);
   //
   try {
-    const { share } = await shareManager.createShare(ShareObj);
+    const { share } = await shareManager.createShare(shareObj);
     //
     res.send(share);
   } catch (error) {
@@ -22,10 +21,11 @@ router.post(PATH + '/shares', async (req, res) => {
   }
 });
 
-router.delete(PATH + '/shares/:id', async (req, res) => {
+router.delete(PATH + '/shares/:id', auth, async (req, res) => {
+  const shareId = req.params.id;
   //
   try {
-    const { share } = await shareManager.deleteShare(req.params.id);
+    const { share } = await shareManager.deleteShare(shareId);
     //
     res.send(share);
   } catch (error) {

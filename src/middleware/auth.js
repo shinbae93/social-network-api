@@ -7,7 +7,7 @@ const auth = async (req, res, next) => {
     const tokenDecoded = decodeToken(token);
     const user = await User.findOne({
       _id: tokenDecoded._id,
-      'refreshTokens.token': tokenDecoded.token
+      // 'refreshTokens.token': tokenDecoded.token
     })
     //
     if (!user) {
