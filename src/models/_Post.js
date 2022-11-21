@@ -53,6 +53,15 @@ postSchema.virtual('shares', {
   localField: '_id',
   foreignField: 'postId'
 });
+// # Methods
+postSchema.methods.toJSON = function () {
+  const PICK_FIELDS = ["_id", "userId", "content", "attachments", "totalLikes", "totalComments", "totalShares", "comments", "createdAt", "updatedAt"];
+  //
+  const user = this;
+  const userObject = lodash.pick(user, PICK_FIELDS);
+  //
+  return userObject;
+}
 //
 const Post = mongoose.model('Post', postSchema);
 //
