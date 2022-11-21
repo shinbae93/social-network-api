@@ -7,6 +7,7 @@ const userRouter = require('./routers/web-user-manager');
 const postRouter = require('./routers/web-post-manager');
 const commentRouter = require('./routers/web-comment-manager');
 const shareRouter = require('./routers/web-share-manager');
+const likeRouter = require('./routers/web-like-manager');
 
 const app = express();
 
@@ -22,6 +23,7 @@ app.use(userRouter);
 app.use(postRouter);
 app.use(commentRouter);
 app.use(shareRouter);
+app.use(likeRouter);
 app.get('/debug-sentry', function mainHandler(req, res) {
   throw new Error('My first Sentry error!');
 });
