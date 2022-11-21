@@ -2,8 +2,6 @@ const lodash = require('lodash');
 const { User } = require('../models/_User');
 const { Post } = require('../models/_Post');
 const { Like } = require('../models/_Like');
-const { Comment } = require('../models/_Comment');
-const { Share } = require('../models/_Share');
 //
 function LikeManager(params) {};
 //
