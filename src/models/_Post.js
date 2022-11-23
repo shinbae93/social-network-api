@@ -55,7 +55,7 @@ postSchema.virtual('shares', {
 });
 // # Methods
 postSchema.methods.toJSON = function () {
-  const PICK_FIELDS = ["_id", "userId", "content", "attachments", "totalLikes", "totalComments", "totalShares", "comments", "createdAt", "updatedAt"];
+  const PICK_FIELDS = ["_id", "userId", "user", "content", "attachments", "totalLikes", "totalComments", "totalShares", "comments", "createdAt", "updatedAt"];
   //
   const user = this;
   const userObject = lodash.pick(user, PICK_FIELDS);

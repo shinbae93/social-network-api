@@ -27,6 +27,15 @@ const commentSchema = new mongoose.Schema(
 //
 const Comment = mongoose.model('Comment', commentSchema);
 //
+commentSchema.methods.toJSON = function () {
+  const PICK_FIELDS = ["_id", "userId", "content", "attachments", "createdAt", "updatedAt"];
+  //
+  const comment = this;
+  const commentObject = lodash.pick(comment, PICK_FIELDS);
+  //
+  return commentObject;
+}
+//
 module.exports = {
   Comment
 };
