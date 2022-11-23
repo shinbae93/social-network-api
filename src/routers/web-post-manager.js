@@ -62,6 +62,31 @@ router.get(PATH + '/posts', auth, async function (req, res) {
   }
 });
 //
-/* Other routers here */
+router.get(PATH + '/posts/:id', auth, async function (req, res) {
+  const postId = req.params.id;
+  try {
+    const post = await postManager.getPost(postId);
+    //
+    res.send(post);
+  } catch (error) {
+    res.status(400).send({ message: error.message });
+  }
+});
+//
+router.get(PATH + '/posts/me', auth, async function (req, res) {
+  const userId = req.user._id;
+  try {
+    const criteria = {};
+    if (userId) {
+      lodash.set(criteria, "userId", userId);
+    }
+    const posts = await postManager.findPosts(criteria);
+    //
+    res.send(posts);
+  } catch (error) {
+    res.status(400).send({ message: error.message });
+  }
+});
+//
 //
 module.exports = router;

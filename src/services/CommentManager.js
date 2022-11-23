@@ -55,7 +55,7 @@ CommentManager.prototype.deleteComment = async function (commentId, more) {
 CommentManager.prototype.getCommentByPost = async function (postId, more) {
   const comments = await Comment.find({
     postId
-  });
+  }).sort([['createdAt', -1]]);
   const output = {};
   //
   output.comments = comments;
