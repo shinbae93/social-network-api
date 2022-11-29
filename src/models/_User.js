@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const validator = require('validator');
 const bcrypt = require('bcryptjs');
 const lodash = require('lodash');
-const slugify = require('slugify');
+const vietnameseSlugify = require('vietnamese-slugify');
 //
 const userSchema = new mongoose.Schema({
   name: {
@@ -98,12 +98,7 @@ userSchema.pre('save', async function (next) {
     user.password = await bcrypt.hash(user.password, HASH_TIMES);
   }
   //
-  user.slug = slugify(user.name, {
-    replacement: '-',
-    lower: true,
-    locale: 'vi',
-    trim: true
-  });
+  user.slug = vietnameseSlugify(user.name);
   //
   next();
 });
