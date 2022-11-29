@@ -10,7 +10,7 @@ const PATH = '/api/v1';
 const postManager = new PostManager();
 //
 router.post(PATH + '/posts', [auth, fileUploader.array('attachments')], async (req, res) => {
-  const PICK_FIELDS = ['content', 'userId'];
+  const PICK_FIELDS = ['content', 'attachments', 'userId'];
   const postObj = lodash.pick(req.body, PICK_FIELDS);
   //
   if (req.files) {
@@ -32,7 +32,7 @@ router.post(PATH + '/posts', [auth, fileUploader.array('attachments')], async (r
 //
 router.patch(PATH + '/posts/:id', [auth, fileUploader.array('attachments')], async (req, res) => {
   const id = req.params.id;
-  const PICK_FIELDS = ['content'];
+  const PICK_FIELDS = ['content', 'attachments'];
   const postObj = lodash.pick(req.body, PICK_FIELDS);
   //
   let attachments = [];
@@ -81,7 +81,7 @@ router.get(PATH + '/posts/of/me', auth, async function (req, res) {
     if (userId) {
       lodash.set(criteria, "userId", userId);
     }
-    const posts = await postManager.findPosts(criteria);
+    const posts = await postManager.findPosts(criteria, { withShare: true });
     const postsExtra = await postManager.wrapExtraToFindPosts(userId, posts);
     //
     res.send(postsExtra);
@@ -97,7 +97,7 @@ router.get(PATH + '/posts/of/users/:id', auth, async function (req, res) {
     if (userId) {
       lodash.set(criteria, "userId", userId);
     }
-    const posts = await postManager.findPosts(criteria);
+    const posts = await postManager.findPosts(criteria, { withShare: true });
     const postsExtra = await postManager.wrapExtraToFindPosts(req.user._id, posts);
     //
     res.send(postsExtra);

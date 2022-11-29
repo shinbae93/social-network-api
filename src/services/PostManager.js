@@ -3,11 +3,13 @@ const { User } = require('../models/_User');
 const { Post } = require('../models/_Post');
 const { UserManager } = require('./UserManager');
 const { LikeManager } = require('./LikeManager');
+const { ShareManager } = require('./ShareManager');
 var cloudinary = require('cloudinary').v2;
 //
 function PostManager(params) {}
 const userManager = new UserManager();
 const likeManager = new LikeManager();
+const shareManager = new ShareManager();
 //
 PostManager.prototype.createPost = async function (postObj, more) {
   const post = new Post(postObj);
@@ -36,6 +38,22 @@ PostManager.prototype.findPosts = async function (criteria, more) {
   const userId = lodash.get(criteria, "userId");
   if (userId) {
     lodash.set(queryObj, "userId", userId);
+    //
+    if (more && more.withShare === true) {
+      lodash.set(queryObj, "$or", [
+        { userId: queryObj.userId }
+      ]);
+      lodash.unset(queryObj, "userId");
+      //
+      const shares = await shareManager.getShareByUserId(userId);
+      const postIds = []
+      for (const item of shares) {
+        postIds.push(item.postId);
+      }
+      queryObj["$or"].push({
+        _id: { $in: postIds }
+      });
+    }
   }
   //
   let posts = await Post.find(queryObj)
