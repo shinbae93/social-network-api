@@ -37,6 +37,8 @@ UserManager.prototype.createUser = async function(userObj, more) {
   const user = new User(userObj);
   const output = {};
   //
+  await user.save();
+  //
   if (more && more.generateAuthToken === true) {
     const token = await this.generateAuthToken(user._id);
     user.refreshTokens = user.refreshTokens.concat({ token });
@@ -44,7 +46,6 @@ UserManager.prototype.createUser = async function(userObj, more) {
     output.token = token;
   };
   //
-  await user.save();
   output.user = user;
   //
   return output;
