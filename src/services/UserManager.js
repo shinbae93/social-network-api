@@ -1,7 +1,7 @@
 const lodash = require('lodash');
 const { User } = require('../models/_User');
 const jwt = require('jsonwebtoken');
-const slugify = require('slugify');
+const vietnameseSlugify = require('vietnamese-slugify');
 //
 function UserManager(params) {};
 //
@@ -10,12 +10,7 @@ UserManager.prototype.findUsers = async function(criteria, more) {
   //
   const nameQuery = criteria.name; 
   if(nameQuery) {
-    const slugNameQuery = slugify(nameQuery, {
-      replacement: '-',
-      lower: true,
-      locale: 'vi',
-      trim: true
-    });
+    const slugNameQuery = vietnameseSlugify(nameQuery);
     queryObj.slug = { "$regex": slugNameQuery }
   }
   const users = await User.find(queryObj);
