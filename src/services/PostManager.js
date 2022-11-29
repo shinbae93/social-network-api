@@ -2,10 +2,12 @@ const lodash = require('lodash');
 const { User } = require('../models/_User');
 const { Post } = require('../models/_Post');
 const { UserManager } = require('./UserManager');
+const { LikeManager } = require('./LikeManager');
 var cloudinary = require('cloudinary').v2;
 //
 function PostManager(params) {}
 const userManager = new UserManager();
+const likeManager = new LikeManager();
 //
 PostManager.prototype.createPost = async function (postObj, more) {
   const post = new Post(postObj);
@@ -60,6 +62,16 @@ PostManager.prototype.findPosts = async function (criteria, more) {
   };
   //
   return output;
+};
+//
+PostManager.prototype.wrapExtraToFindPosts = async function (userId, posts, more) {
+  for (let i in posts.rows) {
+    // isLike
+    const like = await likeManager.findLikes({ userId, postId: posts.rows[i]._id });
+    posts.rows[i].isLike = like.count === 0 ? false : true;
+  }
+  //
+  return posts;
 };
 //
 PostManager.prototype.getPost = async function (postId, more) {
