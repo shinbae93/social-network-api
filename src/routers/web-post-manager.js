@@ -55,8 +55,9 @@ router.patch(PATH + '/posts/:id', [auth, fileUploader.array('attachments')], asy
 router.get(PATH + '/posts', auth, async function (req, res) {
   try {
     const posts = await postManager.findPosts();
+    const postsExtra = await postManager.wrapExtraToFindPosts(req.user._id, posts);
     //
-    res.send(posts);
+    res.send(postsExtra);
   } catch (error) {
     res.status(400).send({ message: error.message });
   }
@@ -73,7 +74,7 @@ router.get(PATH + '/posts/:id', auth, async function (req, res) {
   }
 });
 //
-router.get(PATH + '/posts/me', auth, async function (req, res) {
+router.get(PATH + '/posts/of/me', auth, async function (req, res) {
   const userId = req.user._id;
   try {
     const criteria = {};
@@ -81,12 +82,28 @@ router.get(PATH + '/posts/me', auth, async function (req, res) {
       lodash.set(criteria, "userId", userId);
     }
     const posts = await postManager.findPosts(criteria);
+    const postsExtra = await postManager.wrapExtraToFindPosts(userId, posts);
     //
-    res.send(posts);
+    res.send(postsExtra);
   } catch (error) {
     res.status(400).send({ message: error.message });
   }
 });
 //
+router.get(PATH + '/posts/of/users/:id', auth, async function (req, res) {
+  const userId = req.params.id;
+  try {
+    const criteria = {};
+    if (userId) {
+      lodash.set(criteria, "userId", userId);
+    }
+    const posts = await postManager.findPosts(criteria);
+    const postsExtra = await postManager.wrapExtraToFindPosts(req.user._id, posts);
+    //
+    res.send(postsExtra);
+  } catch (error) {
+    res.status(400).send({ message: error.message });
+  }
+});
 //
 module.exports = router;
