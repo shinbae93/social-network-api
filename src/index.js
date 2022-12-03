@@ -1,10 +1,14 @@
 const express = require('express');
 const cors = require('cors');
+var morgan = require('morgan');
 const Sentry = require('@sentry/node');
 const Tracing = require('@sentry/tracing');
 require('./models/database/mongoose');
 const userRouter = require('./routers/web-user-manager');
 const postRouter = require('./routers/web-post-manager');
+const commentRouter = require('./routers/web-comment-manager');
+const shareRouter = require('./routers/web-share-manager');
+const likeRouter = require('./routers/web-like-manager');
 
 const app = express();
 
@@ -23,12 +27,16 @@ Sentry.init({
 /** Middle wares */
 app.use(Sentry.Handlers.requestHandler()); // The request handler must be the first middleware on the app
 app.use(Sentry.Handlers.tracingHandler()); // TracingHandler creates a trace for every incoming request
+app.use(morgan('tiny'));
 app.use(cors());
 app.use(express.json());
 
 /** Routers */
 app.use(userRouter);
 app.use(postRouter);
+app.use(commentRouter);
+app.use(shareRouter);
+app.use(likeRouter);
 app.get('/debug-sentry', function mainHandler(req, res) {
   throw new Error('My first Sentry error!');
 });

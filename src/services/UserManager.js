@@ -1,11 +1,19 @@
 const lodash = require('lodash');
 const { User } = require('../models/_User');
 const jwt = require('jsonwebtoken');
+const vietnameseSlugify = require('vietnamese-slugify');
 //
 function UserManager(params) {};
 //
 UserManager.prototype.findUsers = async function(criteria, more) {
-  const users = await User.find();
+  const queryObj = {};
+  //
+  const nameQuery = criteria.name; 
+  if(nameQuery) {
+    const slugNameQuery = vietnameseSlugify(nameQuery);
+    queryObj.slug = { "$regex": slugNameQuery }
+  }
+  const users = await User.find(queryObj);
   //
   const output = {
     rows: users,
@@ -29,6 +37,8 @@ UserManager.prototype.createUser = async function(userObj, more) {
   const user = new User(userObj);
   const output = {};
   //
+  await user.save();
+  //
   if (more && more.generateAuthToken === true) {
     const token = await this.generateAuthToken(user._id);
     user.refreshTokens = user.refreshTokens.concat({ token });
@@ -36,7 +46,6 @@ UserManager.prototype.createUser = async function(userObj, more) {
     output.token = token;
   };
   //
-  await user.save();
   output.user = user;
   //
   return output;
@@ -53,6 +62,27 @@ UserManager.prototype.generateAuthToken = async function(userId, more) {
   }, AUTH_KEY, {expiresIn: 864000});
   //
   return token;
+};
+
+UserManager.prototype.updateUser = async function(userId, userObj, more) {
+  const user = await User.findByIdAndUpdate(userId, userObj, { new: true, runValidators: true });
+  //
+  if (!user) {
+    throw new Error(`Not found user with id [${userId}]!`);
+  }
+  await user.save();
+  //
+  return user;
+};
+
+UserManager.prototype.deleteUser = async function(userId, more) {
+  const user = await User.findByIdAndDelete(userId);
+  //
+  if (!user) {
+    throw new Error(`Not found user with id [${userId}]!`);
+  }
+  //
+  return user;
 };
 //
 module.exports = { UserManager };
