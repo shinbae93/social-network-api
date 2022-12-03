@@ -26,6 +26,7 @@ Sentry.init({
 
 /** Middle wares */
 app.use(Sentry.Handlers.requestHandler()); // The request handler must be the first middleware on the app
+app.use(Sentry.Handlers.tracingHandler()); // TracingHandler creates a trace for every incoming request
 app.use(morgan('tiny'));
 app.use(cors());
 app.use(express.json());
