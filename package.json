@@ -4,9 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "mocha src/tests/Test.js",
-    "server": "nodemon src/index.js",
-    "dev": "node src/index.js",
+    "test": "export DB=social-network-test && mocha --timeout 10000 --exit src/tests/Test.js",
+    "server": "export DB=social-network && nodemon src/index.js",
+    "dev": "export DB=social-network && node src/index.js",
     "lint": "eslint src/*",
     "lint:fix": "eslint --fix src/*"
   },
