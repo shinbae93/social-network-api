@@ -73,17 +73,27 @@ PostManager.prototype.findPosts = async function (criteria, more) {
       lodash.set(posts[i].comments[j], "userName", commentedUser.name);
     }
   }
+  // pagination
+  const DEFAULT_LIMIT = 10;
+  const page = lodash.get(criteria, "page") || 1;
+  const _start = DEFAULT_LIMIT * (page -1);
+  const _end = DEFAULT_LIMIT * page;
+  const paginatedPosts = lodash.slice(posts, _start, _end);
   //
   const output = {
-    rows: posts,
-    count: posts.length
-  };
+    count: posts.length,
+    page: page,
+    rows: paginatedPosts,
+  }
   //
   return output;
 };
 //
 PostManager.prototype.wrapExtraToFindPosts = async function (userId, posts, more) {
   for (let i in posts.rows) {
+    if (posts.rows[i].attachments) {
+      posts.rows[i].attachments = JSON.parse(posts.rows[i].attachments);
+    }
     // isLike
     const like = await likeManager.findLikes({ userId, postId: posts.rows[i]._id });
     posts.rows[i].isLike = like.count === 0 ? false : true;
@@ -106,6 +116,13 @@ PostManager.prototype.getPost = async function (postId, more) {
     lodash.set(post.comments[j], "userName", commentedUser.name);
   }
   //
+  // if (post.attachments) {
+  //   post.attachments = JSON.parse(post.attachments);
+  // }
+  // // isLike
+  // const like = await likeManager.findLikes({ userId: post.userId, postId: post._id });
+  // post.isLike = like.count === 0 ? false : true;
+  // //
   return post;
 };
 //
