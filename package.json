@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "mocha src/tests/UserTest.js",
+    "test": "mocha src/tests/Test.js",
     "server": "nodemon src/index.js",
     "dev": "node src/index.js",
     "lint": "eslint src/*",
