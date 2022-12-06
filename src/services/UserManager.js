@@ -8,7 +8,7 @@ function UserManager(params) {};
 UserManager.prototype.findUsers = async function(criteria, more) {
   const queryObj = {};
   //
-  const nameQuery = criteria.name; 
+  const nameQuery = lodash.get(criteria, "name"); 
   if(nameQuery) {
     const slugNameQuery = vietnameseSlugify(nameQuery);
     queryObj.slug = { "$regex": slugNameQuery }
