@@ -19,15 +19,14 @@ const userManager = new UserManager();
 //
 describe('User', function () {
   describe('function getUsers()', function () {
-    it('[GUS-001 Get all users]', async (done) => {
+    it('[GUS-001 Get all users]', async () => {
       await importUser();
-      done();
     });
   });
 });
 
 const importUser = async function() {
-  // await User.remove();
+  await User.deleteMany();
   try {
     for (const userObj of dataSample.users) {
       await User.create(userObj);
