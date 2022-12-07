@@ -61,7 +61,7 @@ router.get(PATH + '/posts', auth, async function (req, res) {
       lodash.set(criteria, "page", query.page);
     }
     //
-    const posts = await postManager.findPosts(criteria);
+    const posts = await postManager.findPosts(criteria, { withPagination: true });
     const postsExtra = await postManager.wrapExtraToFindPosts(req.user._id, posts);
     //
     res.send(postsExtra);
