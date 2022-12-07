@@ -5,7 +5,7 @@ const mongoose = require('mongoose');
 // mongoose.connect(CONNECTION_URL, {
 //   useNewUrlParser: true,
 // });
-const CONNECTION_URL = 'mongodb://tcp-mo4.mogenius.io:41050';
+const CONNECTION_URL = 'mongodb://tcp-mo4.mogenius.io:60390';
 mongoose.connect(CONNECTION_URL, {
   useNewUrlParser: true,
   user: "root",

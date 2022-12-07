@@ -78,16 +78,19 @@ PostManager.prototype.findPosts = async function (criteria, more) {
     }
   }
   // pagination
-  const DEFAULT_LIMIT = 10;
-  const page = lodash.get(criteria, "page") || 1;
-  const _start = DEFAULT_LIMIT * (page -1);
-  const _end = DEFAULT_LIMIT * page;
-  const paginatedPosts = lodash.slice(posts, _start, _end);
+  let page = 0;
+  if (more && more.withPagination === true) {
+    const DEFAULT_LIMIT = 10;
+    page = lodash.get(criteria, "page") || 1;
+    const _start = DEFAULT_LIMIT * (page -1);
+    const _end = DEFAULT_LIMIT * page;
+    posts = lodash.slice(posts, _start, _end);
+  }
   //
   const output = {
     count: posts.length,
     page: page,
-    rows: paginatedPosts,
+    rows: posts,
   }
   //
   return output;
