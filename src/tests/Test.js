@@ -5,6 +5,11 @@ const lodash = require('lodash')
 require('../models/database/mongoose');
 const { UserManager } = require('../services/UserManager');
 const { User } = require('../models/_User');
+const { PostManager } = require('../services/PostManager');
+const { Post } = require('../models/_Post');
+const { CommentManager } = require('../services/CommentManager');
+const { LikeManager } = require('../services/LikeManager');
+const { ShareManager } = require('../services/ShareManager');
 const { dataSample } = require('./Data');
 const { describe, it } = require('mocha');
 // Assertion style
@@ -16,8 +21,12 @@ chai.use(chaiAsPromise);
 const assert = chai.assert;
 
 const userManager = new UserManager();
+const postManager = new PostManager();
+const commentManager = new CommentManager();
+const likeManager = new LikeManager();
+const shareManager = new ShareManager();
 //
-describe('User', function () {
+describe('UserManager', function () {
   describe('function findUsers()', function () {
     it('[FUS-001] Find all users', async () => {
       // import 5 users
@@ -181,6 +190,271 @@ describe('User', function () {
     });
   });
 });
+//
+describe('PostManager', function () {
+  describe('function findPosts()', function () {
+    it('[FPS-001] Get all posts', async function () {
+      await importUser();
+      await importPost();
+      //
+      const posts = await postManager.findPosts();
+      //
+      assert.deepEqual(posts.count, 5);
+    });
+    //
+    it('[FPS-002] Get all posts of a user', async function () {
+      await importUser();
+      await importPost();
+      //
+      const QUERY = {
+        userId: "638f3e19a812d5ddd888af2d"
+      };
+      const posts = await postManager.findPosts(QUERY);
+      //
+      assert.deepEqual(posts.count, 1);
+    });
+  });
+  //
+  describe('function getPost()', function () {
+    it('[GPS-001] Get a post with undefined [id], will throw error', async function () {
+      await importUser();
+      await importPost();
+      //
+      const POST_ID = "638f677c73b49a317f37b569";
+      await assert.isRejected(postManager.getPost(POST_ID), "Not found post with id [638f677c73b49a317f37b569]!");
+    });
+    //
+    it('[GPS-002] Get a post with defined [id], will ok', async function () {
+      await importUser();
+      await importPost();
+      //
+      const POST_ID = "638f677c73b49a317f37b568";
+      let post = await postManager.getPost(POST_ID);
+      post = lodash.pick(post, ["content", "totalLikes", "totalComments", "totalShares"]);
+      //
+      const EXPECTED = {
+        "content": "Welcome to Instagram",
+        "totalComments": 0,
+        "totalLikes": 0,
+        "totalShares": 0,
+      }
+      //
+      assert.deepEqual(post, EXPECTED);
+    });
+  });
+  //
+  describe('function createPosts()', function () {
+    it('[CPS-001] Create a post', async function () {
+      await importUser();
+      await importPost();
+      //
+      const POST_OBJ = {
+        "content": "Welcome to Happy hotpot",
+        "userId": "638f3e19a812d5ddd888af2d"
+      }
+      let { post } = await postManager.createPost(POST_OBJ);
+      post = lodash.pick(post.toJSON(), ["content", "totalLikes", "totalComments", "totalShares"]);
+      //
+      const EXPECTED = {
+        "content": "Welcome to Happy hotpot",
+        "totalLikes": 0,
+        "totalComments": 0,
+        "totalShares": 0
+      }
+      //
+      assert.deepEqual(post, EXPECTED);
+    });
+  });
+  //
+  describe('function updatePost()', function () {
+    it('[UPS-001] Update a post with undefined [id], will throw error', async function () {
+      await importUser();
+      await importPost();
+      //
+      const POST_ID = "638f677c73b49a317f37b569";
+      await assert.isRejected(postManager.updatePost(POST_ID, { content: "Modified"}), "Not found post with id [638f677c73b49a317f37b569]!");
+    });
+    //
+    it('[UPS-002] Update a post with defined [id], will ok', async function () {
+      await importUser();
+      await importPost();
+      //
+      const POST_ID = "638f677c73b49a317f37b568";
+      //
+      await postManager.updatePost(POST_ID, { content: "Modified"});
+      //
+      let post = await postManager.getPost(POST_ID);
+      post = lodash.pick(post, ["content", "totalLikes", "totalComments", "totalShares"]);
+      //
+      const EXPECTED = {
+        "content": "Modified",
+        "totalComments": 0,
+        "totalLikes": 0,
+        "totalShares": 0,
+      }
+      //
+      assert.deepEqual(post, EXPECTED);
+    });
+  });
+  //
+  describe('function createLike()', function () {
+    it('[CLK-001] Create a Like, Post\'s [totalLikes] increase 1', async function () {
+      await importUser();
+      await importPost();
+      //
+      const POST_ID = "638f677c73b49a317f37b568";
+      let post = await postManager.getPost(POST_ID);
+      //
+      assert.deepEqual(post.totalLikes, 0);
+      //
+      const LIKE_OBJ = {
+        "postId": "638f677c73b49a317f37b568",
+        "userId": "638f3e19a812d5ddd888af31"
+      }
+      //
+      await likeManager.createLike(LIKE_OBJ);
+      //
+      post = await postManager.getPost(POST_ID);
+      //
+      assert.deepEqual(post.totalLikes, 1);
+    });
+  });
+  //
+  describe('function deleteLike()', function () {
+    it('[DLK-001] Delete a Like, Post\'s [totalLikes] decrease 1', async function () {
+      await importUser();
+      await importPost();
+      //
+      const POST_ID = "638f677c73b49a317f37b568";
+      let post = await postManager.getPost(POST_ID);
+      //
+      assert.deepEqual(post.totalLikes, 0);
+      //
+      const LIKE_OBJ = {
+        "postId": "638f677c73b49a317f37b568",
+        "userId": "638f3e19a812d5ddd888af31"
+      }
+      //
+      const like = await likeManager.createLike(LIKE_OBJ);
+      //
+      post = await postManager.getPost(POST_ID);
+      //
+      assert.deepEqual(post.totalLikes, 1);
+      //
+      await likeManager.deleteLike(like._id);
+      //
+      post = await postManager.getPost(POST_ID);
+      //
+      assert.deepEqual(post.totalLikes, 0);
+    });
+  });
+  //
+  describe('function createComment()', function () {
+    it('[CCM-001] Create a Comment, Post\'s [totalComments] increase 1', async function () {
+      await importUser();
+      await importPost();
+      //
+      const POST_ID = "638f677c73b49a317f37b568";
+      let post = await postManager.getPost(POST_ID);
+      //
+      assert.deepEqual(post.totalComments, 0);
+      //
+      const CMT_OBJ = {
+        "content": "Comment 1",
+        "postId": "638f677c73b49a317f37b568",
+        "userId": "638f3e19a812d5ddd888af31"
+      }
+      //
+      await commentManager.createComment(CMT_OBJ);
+      //
+      post = await postManager.getPost(POST_ID);
+      //
+      assert.deepEqual(post.totalComments, 1);
+    });
+  });
+  //
+  describe('function deleteComment()', function () {
+    it('[DCM-001] Delete a Comment, Post\'s [totalComments] decrease 1', async function () {
+      await importUser();
+      await importPost();
+      //
+      const POST_ID = "638f677c73b49a317f37b568";
+      let post = await postManager.getPost(POST_ID);
+      //
+      assert.deepEqual(post.totalComments, 0);
+      //
+      const CMT_OBJ = {
+        "content": "Comment 1",
+        "postId": "638f677c73b49a317f37b568",
+        "userId": "638f3e19a812d5ddd888af31"
+      }
+      //
+      const comment = await commentManager.createComment(CMT_OBJ);
+      //
+      post = await postManager.getPost(POST_ID);
+      //
+      assert.deepEqual(post.totalComments, 1);
+      //
+      await commentManager.deleteComment(comment._id);
+      //
+      post = await postManager.getPost(POST_ID);
+      //
+      assert.deepEqual(post.totalComments, 0);
+    });
+  });
+  //
+  describe('function createShare()', function () {
+    it('[CSH-001] Create a Share, Post\'s [totalShares] increase 1', async function () {
+      await importUser();
+      await importPost();
+      //
+      const POST_ID = "638f677c73b49a317f37b568";
+      let post = await postManager.getPost(POST_ID);
+      //
+      assert.deepEqual(post.totalShares, 0);
+      //
+      const SHARE_OBJ = {
+        "postId": "638f677c73b49a317f37b568",
+        "userId": "638f3e19a812d5ddd888af31"
+      }
+      //
+      await shareManager.createShare(SHARE_OBJ);
+      //
+      post = await postManager.getPost(POST_ID);
+      //
+      assert.deepEqual(post.totalShares, 1);
+    });
+  });
+  //
+  describe('function deleteShare()', function () {
+    it('[DSH-001] Delete a Share, Post\'s [totalShares] decrease 1', async function () {
+      await importUser();
+      await importPost();
+      //
+      const POST_ID = "638f677c73b49a317f37b568";
+      let post = await postManager.getPost(POST_ID);
+      //
+      assert.deepEqual(post.totalShares, 0);
+      //
+      const SHARE_OBJ = {
+        "postId": "638f677c73b49a317f37b568",
+        "userId": "638f3e19a812d5ddd888af31"
+      }
+      //
+      const share = await shareManager.createShare(SHARE_OBJ);
+      //
+      post = await postManager.getPost(POST_ID);
+      //
+      assert.deepEqual(post.totalShares, 1);
+      //
+      await shareManager.deleteShare(share._id);
+      //
+      post = await postManager.getPost(POST_ID);
+      //
+      assert.deepEqual(post.totalShares, 0);
+    });
+  });
+});
 
 const importUser = async function() {
   await User.deleteMany();
@@ -191,5 +465,15 @@ const importUser = async function() {
   } catch (error) {
     console.log(error);
   }
-  
+};
+
+const importPost = async function() {
+  await Post.deleteMany();
+  try {
+    for (const postObj of dataSample.posts) {
+      await Post.create(postObj);
+    }
+  } catch (error) {
+    console.log(error);
+  }
 };

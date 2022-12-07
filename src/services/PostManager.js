@@ -25,6 +25,10 @@ PostManager.prototype.updatePost = async function (id, postObj, more) {
   const post = await Post.findByIdAndUpdate({ _id: id }, postObj, {
     new: true
   });
+  //
+  if (!post) {
+    throw new Error(`Not found post with id [${id}]!`);
+  }
   const output = {};
   //
   output.post = post;
@@ -105,6 +109,11 @@ PostManager.prototype.wrapExtraToFindPosts = async function (userId, posts, more
 PostManager.prototype.getPost = async function (postId, more) {
   let post = await Post.findById(postId)
     .populate('comments');
+  //
+  if (!post) {
+    throw new Error(`Not found post with id [${postId}]!`);
+  }
+  //
   post = post.toJSON();
   //
   let user = await userManager.getUser(post.userId);
