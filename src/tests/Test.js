@@ -2,7 +2,7 @@ const chai = require("chai");
 const chaiHttp = require("chai-http");
 const chaiAsPromise = require("chai-as-promised");
 const lodash = require('lodash')
-require('../models/database/mongoose');
+require('../models/database/mongoose-test');
 const { UserManager } = require('../services/UserManager');
 const { User } = require('../models/_User');
 const { PostManager } = require('../services/PostManager');
