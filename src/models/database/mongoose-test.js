@@ -5,5 +5,5 @@ mongoose.connect(CONNECTION_URL, {
   useNewUrlParser: true,
   user: "root",
   pass: "123456",
-  dbName: "social-network"
+  dbName: "social-network-test"
 });
