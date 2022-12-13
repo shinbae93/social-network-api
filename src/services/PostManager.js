@@ -63,6 +63,7 @@ PostManager.prototype.findPosts = async function (criteria, more) {
   let posts = await Post.find(queryObj)
     .sort([['createdAt', -1]])
     .populate('comments');
+  const count = posts.count;
   posts = lodash.map(posts, function(item) {
     return item.toJSON();
   });
@@ -88,7 +89,7 @@ PostManager.prototype.findPosts = async function (criteria, more) {
   }
   //
   const output = {
-    count: posts.length,
+    count: count,
     page: page,
     rows: posts,
   }
