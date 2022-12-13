@@ -51,6 +51,9 @@ ShareManager.prototype.getShareByPost = async function (postId, more) {
   return output;
 };
 
-/* Other services here */
+ShareManager.prototype.getShareByUserId = async function (userId, more) {
+  const shares = await Share.find({ userId });
+  return shares;
+}
 //
 module.exports = { ShareManager };

@@ -1,10 +1,2 @@
-## Init
-```
-npm install
-```
-## Database connection
-- Go to models/database/mongoose.js to config Connection with mongodb
-## Run server
-```
-npm run server
-```
+# 19N11 - TEAM 9 - Social Network: News Feed Design 
+- Link video và slide: https://drive.google.com/drive/folders/1ZxhyIt3mdmpk3bXSEQ3JlQ4LDsva1Rj_?usp=sharing

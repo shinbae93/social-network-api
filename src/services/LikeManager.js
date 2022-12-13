@@ -6,7 +6,18 @@ const { Like } = require('../models/_Like');
 function LikeManager(params) {};
 //
 LikeManager.prototype.findLikes = async function(criteria, more) {
-  const likes = await Like.find();
+  const queryObj = {};
+  //
+  const userIdQuery = criteria.userId;
+  if (userIdQuery) {
+    queryObj.userId = userIdQuery;
+  } 
+  //
+  const postIdQuery = criteria.postId;
+  if (postIdQuery) {
+    queryObj.postId = postIdQuery;
+  } 
+  const likes = await Like.find(queryObj);
   //
   const output = {
     rows: likes,
@@ -38,12 +49,9 @@ LikeManager.prototype.createLike = async function (likeObj, more) {
   await Post.findByIdAndUpdate(likeObj.postId, {
     totalLikes: post.totalLikes + 1
   }, { new: true });
-  const output = {};
   //
   await like.save();
-  output.like = like;
-  //
-  return output;
+  return like;
 };
 
 LikeManager.prototype.deleteLike = async function (likeId, more) {
@@ -57,11 +65,8 @@ LikeManager.prototype.deleteLike = async function (likeId, more) {
   await Post.findByIdAndUpdate(like.postId, {
     totalLikes: post.totalLikes - 1
   }, { new: true });
-  const output = {};
   //
-  output.like = like;
-  //
-  return output;
+  return like;
 };
 //
 module.exports = { LikeManager };

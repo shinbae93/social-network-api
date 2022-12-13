@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 const validator = require('validator');
 const bcrypt = require('bcryptjs');
 const lodash = require('lodash');
+const vietnameseSlugify = require('vietnamese-slugify');
 //
 const userSchema = new mongoose.Schema({
   name: {
@@ -9,8 +10,14 @@ const userSchema = new mongoose.Schema({
     required: true,
     trim: true
   },
+  slug: {
+    type: String,
+    required: false,
+    trim: true
+  },
   email: {
     type: String,
+    required: true,
     unique: true,
     trim: true,
     lowercase: true,
@@ -76,7 +83,7 @@ userSchema.statics.findByCredentials = async (email, password) => {
 }
 //
 userSchema.methods.toJSON = function () {
-  const PICK_FIELDS = ["_id", "name", "email", "createdAt", "updatedAt"];
+  const PICK_FIELDS = ["_id", "name", "slug", "email", "createdAt", "updatedAt"];
   //
   const user = this;
   const userObject = lodash.pick(user, PICK_FIELDS);
@@ -91,6 +98,8 @@ userSchema.pre('save', async function (next) {
   if (user.isModified('password')) {
     user.password = await bcrypt.hash(user.password, HASH_TIMES);
   }
+  //
+  user.slug = vietnameseSlugify(user.name);
   //
   next();
 });
